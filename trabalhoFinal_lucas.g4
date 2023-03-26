@@ -32,15 +32,15 @@ comandos: print
     |callFunc
     ;
 comandosLoop:
-    |comandos
-    |'break'
-    |'if' '(' expr ')' '{' (comandos | 'break')+ '}' ('else' '{' (comandos | 'break')+ '}')?
+    |(comandos | break | 'if' '(' expr ')' '{' (comandos | break)+ '}' ('else' '{' (comandos | break)+ '}')? )+
+    ;
+break: 'break' ';'
     ;
 print: 'print' '(' expr (',' expr)* ')' ';'
     ;
 input: 'input' '(' listaIds ')' ';'
     ;
-for: 'for' '(' atrib ';' expr ';' expr ')' '{' comandosLoop '}' ';'
+for: 'for' '(' atrib ';' expr ';' atribuicao ')' '{' comandosLoop '}'
     ;
 while: 'while' '(' expr ')' '{' comandosLoop '}'
     ;

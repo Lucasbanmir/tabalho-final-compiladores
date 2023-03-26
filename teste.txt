@@ -1,0 +1,21 @@
+main(){
+    while(i<10){
+        break;
+        input(a);
+        if(i){
+            break;
+        }
+        else{
+            break;
+        }
+        if(i){
+            print(i);
+            break;
+        }
+        else{
+            break;
+        }
+        break;
+        break;
+    }
+}
