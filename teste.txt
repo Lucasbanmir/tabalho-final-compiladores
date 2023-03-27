@@ -1,21 +1,16 @@
+int i, o;
+const real u = 10.0, a = 20.2;
+
+real soma(){
+    int y, z;
+    return;
+}
+
 main(){
-    while(i<10){
-        break;
-        input(a);
-        if(i){
-            break;
-        }
-        else{
-            break;
-        }
-        if(i){
-            print(i);
-            break;
-        }
-        else{
-            break;
-        }
-        break;
+    int b;
+    for(i=10; i<20; i=i+1){
+        print("oi");
         break;
     }
+    return;
 }

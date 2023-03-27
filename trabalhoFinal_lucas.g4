@@ -2,8 +2,8 @@ grammar trabalhoFinal_lucas;
 
 prog: decVarConst* decFunc* main
     ;
-decVarConst: tipo listaIds ';'
-    | 'const' tipo listaAtrib ';'
+decVarConst: tipo listaIds ';' #decVar
+    | 'const' tipo listaAtrib ';' #decConst
     ;
 tipo: 'int'
     | 'real'
@@ -18,7 +18,7 @@ atrib: ID '=' dado
     ;
 funcBloco: decVarConst* comandos+
     ;
-decFunc: (tipo|'void')? ID '(' (tipo ID (',' tipo ID)*)? ')' '{' funcBloco '}'
+decFunc: (tipo|'void')? ID '(' (tipo ID (',' tipo ID)*)? ')' '{' funcBloco '}' #decFuncao
     ;
 main: 'main' '(' ')' '{' funcBloco '}'
     ;
@@ -31,58 +31,57 @@ comandos: print
     |atribuicao
     |callFunc
     ;
-comandosLoop:
-    |(comandos | break | 'if' '(' expr ')' '{' (comandos | break)+ '}' ('else' '{' (comandos | break)+ '}')? )+
+comandosLoop: (comandos | break | 'if' '(' expr ')' '{' (comandos | break)+ '}' ('else' '{' (comandos | break)+ '}')? )+
     ;
 break: 'break' ';'
     ;
-print: 'print' '(' expr (',' expr)* ')' ';'
+print: 'print' '(' expr (',' expr)* ')' ';' #decPrint
     ;
-input: 'input' '(' listaIds ')' ';'
+input: 'input' '(' listaIds ')' ';' #decInput
     ;
-for: 'for' '(' atrib ';' expr ';' atribuicao ')' '{' comandosLoop '}'
+for returns [idx]: 'for' '(' ID '=' fator ';' expr ';' atribuicao ')' '{' comandosLoop '}'
     ;
 while: 'while' '(' expr ')' '{' comandosLoop '}'
     ;
 return: 'return' expr? ';'
     ;
-atribuicao: ID '=' expr ';'
+atribuicao: ID '=' expr ';' #decAtrib
     ;
 callFunc: ID '(' (expr (',' expr)*)? ')'
     ;
-expr: expr or termo
-    | termo
+expr returns [type, inh_type]: expr or termo #orOp
+    | termo #passTermo
     ;
-termo: termo and termo2
-    | termo2
+termo returns [type]: termo and termo2 #andOp
+    | termo2 #passTermo2
     ;
-termo2: termo2 comp termo3
-    | termo3
+termo2 returns [type]: termo2 comp termo3 #compOp
+    | termo3 #passTermo3
     ;
-termo3: termo3 equal termo4
-    | termo4
+termo3 returns [type]: termo3 equal termo4 #equalOp
+    | termo4 #passTermo4
     ;
-termo4: termo4 addMinus termo5
-    | termo5
+termo4 returns [type]: termo4 addMinus termo5 #addMinusOp
+    | termo5 #passTermo5
     ;
-termo5: termo5 multiDiv termo6
-    | termo6
+termo5 returns [type]: termo5 multiDiv termo6 #multiDivOp
+    | termo6 #passTermo6
     ;
-termo6: minusUni termo6
-    | termo7
+termo6 returns [type]: minusUni termo6 #minusUniOp
+    | termo7 #passTermo7
     ;
-termo7: not termo7
-    | fator
+termo7 returns [type]: not termo7 #notOp
+    | fator #passFator
     ;
-fator: '(' expr ')'
-    | ID
-    | dado
-    | callFunc
+fator returns [type]: '(' expr ')' #parenExprFat
+    | ID #idFat
+    | dado #dadoFat
+    | callFunc #callFuncaoFat
     ;
-dado: INT
-    | REAL
-    | STRING
-    | BOOL
+dado: INT #intDado
+    | REAL  #realDado
+    | STRING #stringDado
+    | BOOL #boolDado
     ;
 not: '!'
     ;
@@ -108,6 +107,7 @@ or: '||'
     ;
 
 // Regras lexicas
+VOID: 'void';
 INT: [0-9]+;
 BOOL: 'TRUE' | 'FALSE';
 REAL: [0-9]+.[0-9]+;

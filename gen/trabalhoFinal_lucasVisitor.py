@@ -14,8 +14,13 @@ class trabalhoFinal_lucasVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#decVarConst.
-    def visitDecVarConst(self, ctx:trabalhoFinal_lucasParser.DecVarConstContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#decVar.
+    def visitDecVar(self, ctx:trabalhoFinal_lucasParser.DecVarContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#decConst.
+    def visitDecConst(self, ctx:trabalhoFinal_lucasParser.DecConstContext):
         return self.visitChildren(ctx)
 
 
@@ -44,8 +49,8 @@ class trabalhoFinal_lucasVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#decFunc.
-    def visitDecFunc(self, ctx:trabalhoFinal_lucasParser.DecFuncContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#decFuncao.
+    def visitDecFuncao(self, ctx:trabalhoFinal_lucasParser.DecFuncaoContext):
         return self.visitChildren(ctx)
 
 
@@ -64,13 +69,18 @@ class trabalhoFinal_lucasVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#print.
-    def visitPrint(self, ctx:trabalhoFinal_lucasParser.PrintContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#break.
+    def visitBreak(self, ctx:trabalhoFinal_lucasParser.BreakContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#input.
-    def visitInput(self, ctx:trabalhoFinal_lucasParser.InputContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#decPrint.
+    def visitDecPrint(self, ctx:trabalhoFinal_lucasParser.DecPrintContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#decInput.
+    def visitDecInput(self, ctx:trabalhoFinal_lucasParser.DecInputContext):
         return self.visitChildren(ctx)
 
 
@@ -89,8 +99,8 @@ class trabalhoFinal_lucasVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#atribuicao.
-    def visitAtribuicao(self, ctx:trabalhoFinal_lucasParser.AtribuicaoContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#decAtrib.
+    def visitDecAtrib(self, ctx:trabalhoFinal_lucasParser.DecAtribContext):
         return self.visitChildren(ctx)
 
 
@@ -99,53 +109,123 @@ class trabalhoFinal_lucasVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#expr.
-    def visitExpr(self, ctx:trabalhoFinal_lucasParser.ExprContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#orOp.
+    def visitOrOp(self, ctx:trabalhoFinal_lucasParser.OrOpContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#termo.
-    def visitTermo(self, ctx:trabalhoFinal_lucasParser.TermoContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#passTermo.
+    def visitPassTermo(self, ctx:trabalhoFinal_lucasParser.PassTermoContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#termo2.
-    def visitTermo2(self, ctx:trabalhoFinal_lucasParser.Termo2Context):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#andOp.
+    def visitAndOp(self, ctx:trabalhoFinal_lucasParser.AndOpContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#termo3.
-    def visitTermo3(self, ctx:trabalhoFinal_lucasParser.Termo3Context):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#passTermo2.
+    def visitPassTermo2(self, ctx:trabalhoFinal_lucasParser.PassTermo2Context):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#termo4.
-    def visitTermo4(self, ctx:trabalhoFinal_lucasParser.Termo4Context):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#passTermo3.
+    def visitPassTermo3(self, ctx:trabalhoFinal_lucasParser.PassTermo3Context):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#termo5.
-    def visitTermo5(self, ctx:trabalhoFinal_lucasParser.Termo5Context):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#compOp.
+    def visitCompOp(self, ctx:trabalhoFinal_lucasParser.CompOpContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#termo6.
-    def visitTermo6(self, ctx:trabalhoFinal_lucasParser.Termo6Context):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#equalOp.
+    def visitEqualOp(self, ctx:trabalhoFinal_lucasParser.EqualOpContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#termo7.
-    def visitTermo7(self, ctx:trabalhoFinal_lucasParser.Termo7Context):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#passTermo4.
+    def visitPassTermo4(self, ctx:trabalhoFinal_lucasParser.PassTermo4Context):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#fator.
-    def visitFator(self, ctx:trabalhoFinal_lucasParser.FatorContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#addMinusOp.
+    def visitAddMinusOp(self, ctx:trabalhoFinal_lucasParser.AddMinusOpContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#dado.
-    def visitDado(self, ctx:trabalhoFinal_lucasParser.DadoContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#passTermo5.
+    def visitPassTermo5(self, ctx:trabalhoFinal_lucasParser.PassTermo5Context):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#multiDivOp.
+    def visitMultiDivOp(self, ctx:trabalhoFinal_lucasParser.MultiDivOpContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#passTermo6.
+    def visitPassTermo6(self, ctx:trabalhoFinal_lucasParser.PassTermo6Context):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#minusUniOp.
+    def visitMinusUniOp(self, ctx:trabalhoFinal_lucasParser.MinusUniOpContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#passTermo7.
+    def visitPassTermo7(self, ctx:trabalhoFinal_lucasParser.PassTermo7Context):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#notOp.
+    def visitNotOp(self, ctx:trabalhoFinal_lucasParser.NotOpContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#passFator.
+    def visitPassFator(self, ctx:trabalhoFinal_lucasParser.PassFatorContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#parenExprFat.
+    def visitParenExprFat(self, ctx:trabalhoFinal_lucasParser.ParenExprFatContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#idFat.
+    def visitIdFat(self, ctx:trabalhoFinal_lucasParser.IdFatContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#dadoFat.
+    def visitDadoFat(self, ctx:trabalhoFinal_lucasParser.DadoFatContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#callFuncaoFat.
+    def visitCallFuncaoFat(self, ctx:trabalhoFinal_lucasParser.CallFuncaoFatContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#intDado.
+    def visitIntDado(self, ctx:trabalhoFinal_lucasParser.IntDadoContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#realDado.
+    def visitRealDado(self, ctx:trabalhoFinal_lucasParser.RealDadoContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#stringDado.
+    def visitStringDado(self, ctx:trabalhoFinal_lucasParser.StringDadoContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#boolDado.
+    def visitBoolDado(self, ctx:trabalhoFinal_lucasParser.BoolDadoContext):
         return self.visitChildren(ctx)
 
 
