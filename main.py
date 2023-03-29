@@ -2,7 +2,7 @@ import os
 from antlr4 import *
 from gen.trabalhoFinal_lucasLexer import trabalhoFinal_lucasLexer
 from gen.trabalhoFinal_lucasParser import trabalhoFinal_lucasParser
-from MyListener import trabalhoFinal_lucasListener
+from myListener import trabalhoFinal_lucasListener
 
 if __name__ == '__main__':
     file = FileStream("teste.txt")
@@ -16,11 +16,6 @@ if __name__ == '__main__':
     tree = parser.prog()
 
     # parte analise semantica
-    filename = 'programa_final'
-    l = trabalhoFinal_lucasListener(filename)
+    l = trabalhoFinal_lucasListener()
     walker = ParseTreeWalker()
     walker.walk(l, tree)
-
-    # executar o programa .j
-    # os.system('java -jar jasmin.jar {}'.format(filename + '.j'))
-    # os.system('java {}'.format(filename))

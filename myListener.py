@@ -1,109 +1,76 @@
-# Generated from C:/Users/lucas/Documents/trabalho final compiladores\trabalhoFinal_lucas.g4 by ANTLR 4.11.1
 from antlr4 import *
-if __name__ is not None and "." in __name__:
-    from gen.trabalhoFinal_lucasParser import trabalhoFinal_lucasParser
-else:
-    from gen.trabalhoFinal_lucasParser import trabalhoFinal_lucasParser
-from jasmin import Jasmin, Id
-from Erros import ErroTipoIncompativelDecl, ErroTipoInesperado, ErroTipoNaoInformado, ErroBreak, ErroDeclaracaoJaFeita, \
-    ErroVariavelNaoDeclarada, ErroTipoExpressao, ErroTipoExpressaoDiferenteDeIncremento, ErroRetorno, \
-    ErroDuplaExpressao, ErroArgumentoEsperado, ErroDeclaracaoDepoisDoBloco
+from gen.trabalhoFinal_lucasLexer import trabalhoFinal_lucasLexer
+from gen.trabalhoFinal_lucasParser import trabalhoFinal_lucasParser
+from gen.trabalhoFinal_lucasListener import trabalhoFinal_lucasListener
+from Erros import *
+
+from Erros import *
 
 # This class defines a complete listener for a parse tree produced by trabalhoFinal_lucasParser.
 class trabalhoFinal_lucasListener(ParseTreeListener):
 
-    # tabela de simbolos // refatorar: usar só uma, se nao da problema no gerador
-    tabelaDeSimbolos = {}
-    tabelaDeSimbolos_copy = {}
-
-    # bloco de pilha
-    blocoDePilha = []
-
-    # argumentos de funcoes
-    argumentoDeFuncoes = {}
-
-    # bloco de funcoes com retorno tipado
-    blocoRetorno = []
-
-    # controla escopo da execucao: true para escopo local e false para escopo global
-    controle_escopo = False
-    # controla o endereço de instancia de nova variavel
-    controle_endereco_novo = 0
-
-    # flag para controlar se entrou em um calculo de expressao e impedir que jasmin duplique escrita no .j
-    controleCalculoExpr = False
-
-    def __init__(self, filename):
-        self.jasmin = Jasmin(filename, self.tabelaDeSimbolos)
-        self.label_id = 0
+    def __init__(self):
+        self.symbolTable = {}  # tabela de símbolos global
+        self.symbolTableLocal = {}  # tabela de símbolos local
+        self.inFunction = False  # indica se estamos dentro de uma função
+        self.currentFunctionType = None
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#prog.
     def enterProg(self, ctx:trabalhoFinal_lucasParser.ProgContext):
-        print("Iniciando análise semântica")
+        print("Iniciando compilação")
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#prog.
     def exitProg(self, ctx:trabalhoFinal_lucasParser.ProgContext):
-        print("Finalizando análise semântica")
+        print("Compilado com sucesso!")
+
+        print("\nTabela de símbolos")
+        print(self.symbolTable)
+        print(self.symbolTableLocal)
         pass
 
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#decVar.
     def enterDecVar(self, ctx:trabalhoFinal_lucasParser.DecVarContext):
+        tipo = ctx.tipo().getText()
+        ids = ctx.listaIds().getText().split(',')
+
+        for id in ids:
+            if id in self.symbolTableLocal:
+                raise ValueError(f"Erro semântico: a variável '{id}' já foi declarada")
+            if self.inFunction and id in self.symbolTable:
+                raise ValueError(f"Erro semântico: a variável '{id}' já foi declarada em um escopo anterior")
+            if ctx.tipo().getText() == '<missing <INVALID>>':
+                raise ErroTipoNaoInformado(ctx.start.line, id.getText())
+            if self.inFunction:
+                self.symbolTableLocal[id] = [tipo, None]
+            else:
+                self.symbolTable[id] = [tipo, None]
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#decVar.
     def exitDecVar(self, ctx:trabalhoFinal_lucasParser.DecVarContext):
-        for token in ctx.listaIds().ID():
-            if ctx.tipo().getText() == '<missing <INVALID>>':
-                raise ErroTipoNaoInformado(ctx.start.line, token.getText())
-
-            # se variavel existe e esta no escopo local, da erro
-            if token.getText() in self.tabelaDeSimbolos and self.tabelaDeSimbolos[token.getText()].scope == self.controle_escopo:
-                raise ErroDeclaracaoJaFeita(ctx.start.line, token.getText())
-
-            # se a variavel ja estiver em escopo global, guarda ela para recuperar na saida da funcao de escopo local
-            if token.getText() in self.tabelaDeSimbolos and self.tabelaDeSimbolos[token.getText()].scope == False:
-                self.tabelaDeSimbolos_copy[token.getText()] = self.tabelaDeSimbolos[token.getText()]
-
-            self.tabelaDeSimbolos[token.getText()] = Id(type=ctx.tipo().getText(), scope=self.controle_escopo, address=self.controle_endereco_novo)
-            self.controle_endereco_novo += 1 # atualiza o proximo endereco disponivel
-            self.jasmin.create(token.getText(), ctx.tipo().getText(), self.controle_escopo, False, 0)
+        if self.inFunction:
+            for id in ctx.listaIds().getText().split(','):
+                del self.symbolTableLocal[id]
         pass
 
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#decConst.
     def enterDecConst(self, ctx:trabalhoFinal_lucasParser.DecConstContext):
+        tipo = ctx.tipo().getText()
+        for atrib in ctx.listaAtrib().atrib():
+            id_token = atrib.ID().getText()
+            if id_token in self.symbolTableLocal or id_token in self.symbolTable:
+                raise ValueError(f"Erro semântico: a variável '{id_token}' já foi declarada")
+            if ctx.tipo().getText() == '<missing <INVALID>>':
+                raise ErroTipoNaoInformado(ctx.start.line, id_token.getText())
+            valor = atrib.dado().getText()
+            self.symbolTable[id_token] = [tipo, valor]
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#decConst.
     def exitDecConst(self, ctx:trabalhoFinal_lucasParser.DecConstContext):
-        for atrib in ctx.listaAtrib().atrib():
-            id_token = atrib.ID()
-            if ctx.tipo().getText() == '<missing <INVALID>>':
-                raise ErroTipoNaoInformado(ctx.start.line, id_token.getText())
-
-            # se variavel existe e esta no escopo local, da erro
-            if id_token.getText() in self.tabelaDeSimbolos and self.tabelaDeSimbolos[id_token.getText()].scope == self.controle_escopo:
-                raise ErroDeclaracaoJaFeita(ctx.start.line, id_token.getText())
-
-            if id_token.getText() in self.tabelaDeSimbolos and self.tabelaDeSimbolos[id_token.getText()].scope == False:
-                self.tabelaDeSimbolos_copy[id_token.getText()] = self.tabelaDeSimbolos[id_token.getText()]
-
-            self.tabelaDeSimbolos[id_token.getText()] = Id(type=ctx.tipo().getText(), scope=self.controle_escopo,
-                                                        address=self.controle_endereco_novo)
-            self.controle_endereco_novo += 1  # atualiza o proximo endereco disponivel
-            self.jasmin.create(id_token.getText(), ctx.tipo().getText(), self.controle_escopo, True, atrib.dado().getText())
-
-            # verificar se o tipo atribuido da constante condiz com o valor inserido
-            if ctx.tipo().getText() == 'int' and not atrib.dado().INT():
-                raise ErroTipoIncompativelDecl(ctx.start.line, ctx.tipo().getText())
-            elif ctx.tipo().getText() == 'real' and not atrib.dado().REAL():
-                raise ErroTipoIncompativelDecl(ctx.start.line, ctx.tipo().getText())
-            elif ctx.tipo().getText() == 'bool' and not atrib.dado().BOOL():
-                raise ErroTipoIncompativelDecl(ctx.start.line, ctx.tipo().getText())
-            elif ctx.tipo().getText() == 'String' and not atrib.dado().STRING():
-                raise ErroTipoIncompativelDecl(ctx.start.line, ctx.tipo().getText())
         pass
 
 
@@ -154,95 +121,63 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#decFuncao.
     def enterDecFuncao(self, ctx:trabalhoFinal_lucasParser.DecFuncaoContext):
-        self.controle_escopo = True
-        self.blocoDePilha.append('function')
-        functionId = ctx.ID(0).getText()
+        func_name = ctx.ID().getText()
+        func_type = 'void' if not ctx.tipo() else ctx.tipo().getText()
 
-        # se a funcao tem retorno de tipo entao deve verificar se tem funcao de retorno no bloco
-        if len(ctx.ID()) <= len(ctx.tipo()):
-            functionType = ctx.tipo(0).getText()
-        else:
-            functionType = None
+        # verificando se a função já foi declarada
+        if func_name in self.symbolTable:
+            raise ValueError(f"A função '{func_name}' já foi declarada anteriormente.")
 
-        if functionId in self.tabelaDeSimbolos:
-            raise ErroDeclaracaoJaFeita(ctx.start.line, functionId)
+        # criando um novo escopo local para a função
+        self.symbolTableLocal = {}
+        self.inFunction = True
+        self.currentFunctionType = None
+        if ctx.tipo():
+            self.currentFunctionType = func_type
 
-        self.tabelaDeSimbolos[functionId] = Id(type=functionType, scope=False, address=self.controle_endereco_novo)
+        # adicionando os parâmetros da função na tabela de símbolos local
+        params_node = ctx.parametros()
+        if params_node is not None:
+            params = params_node.tipo()
+            for param in params:
+                param_type = param.getText()
+                param_name = param.parentCtx.ID()[params.index(param)].getText()
 
-        self.controle_endereco_novo += 1
+                if param_name in self.symbolTableLocal:
+                    raise ValueError(f"O parâmetro '{param_name}' já foi declarado anteriormente.")
 
-        # verificando parametros da funcao
-        args = []
-        argsNames = []
-        # se a funcao tem retorno de tipo entao deve verificar se tem funcao de retorno no bloco
-        if len(ctx.ID()) <= len(ctx.tipo()):
-            lista = list(zip(ctx.ID()[1:], ctx.tipo()[1:]))
-        else:
-            lista = list(zip(ctx.ID()[1:], ctx.tipo()[0:]))
+                self.symbolTableLocal[param_name] = param_type
 
-        for id, Tipo in lista:
-            # se variavel existe e esta no escopo local, da erro
-            if id in self.tabelaDeSimbolos and self.tabelaDeSimbolos[id].scope == self.controle_escopo:
-                raise ErroDeclaracaoJaFeita(ctx.start.line, id.getText())
-
-            # se a variavel ja estiver em escopo global, guarda ela para recuperar na saida da funcao de escopo local
-            if id.getText() in self.tabelaDeSimbolos and self.tabelaDeSimbolos[id.getText()].scope == False:
-                self.tabelaDeSimbolos_copy[id.getText()] = self.tabelaDeSimbolos[id.getText()]
-
-            self.tabelaDeSimbolos[id.getText()] = Id(type=Tipo.getText(), scope=self.controle_escopo,
-                                                     address=self.controle_endereco_novo)
-            self.controle_endereco_novo += 1
-            args.append(Tipo.getText())
-            argsNames.append(id.getText())
-
-        self.argumentoDeFuncoes[functionId] = args
-        self.jasmin.criaFuncao(functionId, argsNames)
-
-        # se a funcao tem retorno de tipo entao deve verificar se tem funcao de retorno no bloco
-        if len(ctx.ID()) <= len(ctx.tipo()):
-            self.blocoRetorno.append(functionType)
+        # adicionando a função na tabela de símbolos global
+        self.symbolTable[func_name] = {
+            'type': func_type,
+            'params': list(self.symbolTableLocal.keys())
+        }
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#decFuncao.
-    def exitDecFuncao(self, ctx:trabalhoFinal_lucasParser.DecFuncaoContext):
-        if len(self.blocoRetorno) > 0:
-            self.blocoRetorno.pop()
+    def exitDecFuncao(self, ctx: trabalhoFinal_lucasParser.DecFuncaoContext):
+        self.inFunction = False
+        self.symbolTableLocal.clear()
+        self.currentFunctionType = None
+        pass
 
-        if len(self.blocoRetorno) > 0:
-            raise ErroRetorno(ctx.start.line)
 
-        self.jasmin.fechaFuncao()
+    # Enter a parse tree produced by trabalhoFinal_lucasParser#parametros.
+    def enterParametros(self, ctx:trabalhoFinal_lucasParser.ParametrosContext):
+        pass
 
-        self.blocoDePilha.pop()
-
-        for item in list(self.tabelaDeSimbolos):
-            if self.tabelaDeSimbolos[item].scope:
-                del self.tabelaDeSimbolos[item]
-
-        for item in self.tabelaDeSimbolos_copy:
-            self.tabelaDeSimbolos[item] = self.tabelaDeSimbolos_copy[item]
-
-        # teste
-        for item in self.tabelaDeSimbolos:
-            print(item, ' => ', self.tabelaDeSimbolos[item].scope)
-        print('----------')
-
-        self.controle_escopo = False
+    # Exit a parse tree produced by trabalhoFinal_lucasParser#parametros.
+    def exitParametros(self, ctx:trabalhoFinal_lucasParser.ParametrosContext):
         pass
 
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#main.
     def enterMain(self, ctx:trabalhoFinal_lucasParser.MainContext):
-        self.jasmin.criaMain()
-        self.controle_escopo = True
-        self.blocoDePilha.append('function')
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#main.
     def exitMain(self, ctx:trabalhoFinal_lucasParser.MainContext):
-        self.jasmin.fechaMain()
-        self.blocoDePilha.pop()
-        self.controle_escopo = False
         pass
 
 
@@ -293,55 +228,10 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#for.
     def enterFor(self, ctx:trabalhoFinal_lucasParser.ForContext):
-        # verificando primeiro parametro do for
-        ctxId = ctx.ID().getText()
-        # se variavel ja foi declarada, da erro
-        if ctxId not in self.tabelaDeSimbolos:
-            raise ErroVariavelNaoDeclarada(ctx.start.line, ctxId)
-        # se declaracao nao for do tipo int, da erro
-        if self.controle_escopo:
-            if self.tabelaDeSimbolos[ctxId].type != 'int':
-                raise ErroTipoInesperado(ctx.start.line, 'int', self.tabelaDeSimbolos[ctxId].type)
-
-
-        # verifica se ID declarado é igual aos ids do incremento
-        if ctxId != ctx.atribuicao().ID().getText():
-            raise ErroTipoExpressaoDiferenteDeIncremento(ctx.start.line)
-
-
-        print('break'';' in ctx.comandosLoop().__dict__)
-        if ctx.ID() == None:
-            ctxInt = ctx.INT()
-            # print(ctxInt, self.tabelaDeSimbolos)
-            self.jasmin.iniciaFor_com_valor(ctxInt, ctxId, 'break'';' in ctx.comandosLoop().__dict__, self.controle_escopo)
-        else:
-            ctxInt = self.tabelaDeSimbolos[ctx.ID().getText()].address
-            # print(ctxInt, self.tabelaDeSimbolos)
-            self.jasmin.iniciaFor(ctxInt, ctxId, 'break' in ctx.comandosLoop().__dict__, self.controle_escopo)
-
-        ctx.stack_idx = len(self.blocoDePilha)
-
-        # empilha flag loop para saber se entrou no loop
-        self.blocoDePilha.append('loop')
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#for.
     def exitFor(self, ctx:trabalhoFinal_lucasParser.ForContext):
-        # desempilha flag loop para saber se saiu do loop
-        self.blocoDePilha.pop()
-
-        ctxId = ctx.ID().getText()
-
-        # print(ctxId)
-        # print(ctx.expressao().val)
-        # print(ctx.expressao().inh)
-        # print(ctx.stack_idx)
-        # print(ctx.incremento().op.text, ctx.incremento().INT())
-        # print(ctx.funcao_break() == None)
-
-        # ctxInt = self.tabelaDeSimbolos[ctx.ID(1).getText()].address
-        # print(ctxInt, self.tabelaDeSimbolos)
-        self.jasmin.exit_for(ctxId, ctx.expr().val, ctx.atribuicao().op.text, ctx.incremento().INT(), self.controle_escopo)
         pass
 
 
@@ -359,7 +249,7 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#return.
-    def exitReturn(self, ctx:trabalhoFinal_lucasParser.ReturnContext):
+    def exitReturn(self, ctx: trabalhoFinal_lucasParser.ReturnContext):
         pass
 
 
@@ -454,7 +344,7 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#addMinusOp.
-    def enterAddMinusOp(self, ctx:trabalhoFinal_lucasParser.AddMinusOpContext):
+    def enterAddMinusOp(self, ctx: trabalhoFinal_lucasParser.AddMinusOpContext):
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#addMinusOp.
@@ -561,39 +451,12 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by trabalhoFinal_lucasParser#intDado.
-    def enterIntDado(self, ctx:trabalhoFinal_lucasParser.IntDadoContext):
+    # Enter a parse tree produced by trabalhoFinal_lucasParser#dado.
+    def enterDado(self, ctx:trabalhoFinal_lucasParser.DadoContext):
         pass
 
-    # Exit a parse tree produced by trabalhoFinal_lucasParser#intDado.
-    def exitIntDado(self, ctx:trabalhoFinal_lucasParser.IntDadoContext):
-        pass
-
-
-    # Enter a parse tree produced by trabalhoFinal_lucasParser#realDado.
-    def enterRealDado(self, ctx:trabalhoFinal_lucasParser.RealDadoContext):
-        pass
-
-    # Exit a parse tree produced by trabalhoFinal_lucasParser#realDado.
-    def exitRealDado(self, ctx:trabalhoFinal_lucasParser.RealDadoContext):
-        pass
-
-
-    # Enter a parse tree produced by trabalhoFinal_lucasParser#stringDado.
-    def enterStringDado(self, ctx:trabalhoFinal_lucasParser.StringDadoContext):
-        pass
-
-    # Exit a parse tree produced by trabalhoFinal_lucasParser#stringDado.
-    def exitStringDado(self, ctx:trabalhoFinal_lucasParser.StringDadoContext):
-        pass
-
-
-    # Enter a parse tree produced by trabalhoFinal_lucasParser#boolDado.
-    def enterBoolDado(self, ctx:trabalhoFinal_lucasParser.BoolDadoContext):
-        pass
-
-    # Exit a parse tree produced by trabalhoFinal_lucasParser#boolDado.
-    def exitBoolDado(self, ctx:trabalhoFinal_lucasParser.BoolDadoContext):
+    # Exit a parse tree produced by trabalhoFinal_lucasParser#dado.
+    def exitDado(self, ctx:trabalhoFinal_lucasParser.DadoContext):
         pass
 
 

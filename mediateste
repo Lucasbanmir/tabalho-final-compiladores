@@ -6,12 +6,21 @@ real soma(int i){
     return 2.0;
 }
 
+real media(real n1, real n2){
+   m = n1 + n2 / 2;
+   return m;
+}
+
 main(){
     int b;
-    soma();
+    real x,y;
+    x = 10;
+    y = 2;
+    soma(b);
+    media(x,y);
     for(i=10; i<20; i=i+1){
         print("oi");
         break;
     }
-    return;
+    return 0;
 }

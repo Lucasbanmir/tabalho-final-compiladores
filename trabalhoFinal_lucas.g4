@@ -18,9 +18,11 @@ atrib: ID '=' dado
     ;
 funcBloco: decVarConst* comandos+
     ;
-decFunc: (tipo|'void')? ID '(' (tipo ID (',' tipo ID)*)? ')' '{' funcBloco '}' #decFuncao
+decFunc: (tipo|'void')? ID '(' parametros ')' '{' funcBloco '}' #decFuncao
     ;
-main: 'main' '(' ')' '{' funcBloco '}'
+parametros: (tipo ID (',' tipo ID)*)?
+    ;
+main: 'main' '(' parametros ')' '{' funcBloco '}'
     ;
 comandos: print
     |input
@@ -39,7 +41,7 @@ print: 'print' '(' expr (',' expr)* ')' ';' #decPrint
     ;
 input: 'input' '(' listaIds ')' ';' #decInput
     ;
-for returns [idx]: 'for' '(' ID '=' fator ';' expr ';' atribuicao ')' '{' comandosLoop '}'
+for returns [idx]: 'for' '(' ID '=' fator ';' expr ';' ID '=' expr ')' '{' comandosLoop '}'
     ;
 while: 'while' '(' expr ')' '{' comandosLoop '}'
     ;
@@ -47,7 +49,7 @@ return: 'return' expr? ';'
     ;
 atribuicao: ID '=' expr ';' #decAtrib
     ;
-callFunc: ID '(' (expr (',' expr)*)? ')'
+callFunc: ID '(' (expr (',' expr)*)? ')' ';'
     ;
 expr returns [type, inh_type]: expr or termo #orOp
     | termo #passTermo
@@ -78,10 +80,10 @@ fator returns [type]: '(' expr ')' #parenExprFat
     | dado #dadoFat
     | callFunc #callFuncaoFat
     ;
-dado: INT #intDado
-    | REAL  #realDado
-    | STRING #stringDado
-    | BOOL #boolDado
+dado: INT
+    | REAL
+    | STRING
+    | BOOL
     ;
 not: '!'
     ;

@@ -1,4 +1,4 @@
-# Generated from C:/Users/lucas/Documents/trabalho final compiladores\trabalhoFinal_lucas.g4 by ANTLR 4.11.1
+# Generated from C:/Users/Medclub/Documents/tabalho-final-compiladores\trabalhoFinal_lucas.g4 by ANTLR 4.11.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .trabalhoFinal_lucasParser import trabalhoFinal_lucasParser
@@ -51,6 +51,11 @@ class trabalhoFinal_lucasVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by trabalhoFinal_lucasParser#decFuncao.
     def visitDecFuncao(self, ctx:trabalhoFinal_lucasParser.DecFuncaoContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#parametros.
+    def visitParametros(self, ctx:trabalhoFinal_lucasParser.ParametrosContext):
         return self.visitChildren(ctx)
 
 
@@ -209,23 +214,8 @@ class trabalhoFinal_lucasVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#intDado.
-    def visitIntDado(self, ctx:trabalhoFinal_lucasParser.IntDadoContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#realDado.
-    def visitRealDado(self, ctx:trabalhoFinal_lucasParser.RealDadoContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#stringDado.
-    def visitStringDado(self, ctx:trabalhoFinal_lucasParser.StringDadoContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by trabalhoFinal_lucasParser#boolDado.
-    def visitBoolDado(self, ctx:trabalhoFinal_lucasParser.BoolDadoContext):
+    # Visit a parse tree produced by trabalhoFinal_lucasParser#dado.
+    def visitDado(self, ctx:trabalhoFinal_lucasParser.DadoContext):
         return self.visitChildren(ctx)
 
 

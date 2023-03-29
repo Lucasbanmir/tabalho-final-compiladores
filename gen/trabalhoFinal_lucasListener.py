@@ -1,4 +1,4 @@
-# Generated from C:/Users/lucas/Documents/trabalho final compiladores\trabalhoFinal_lucas.g4 by ANTLR 4.11.1
+# Generated from C:/Users/Medclub/Documents/tabalho-final-compiladores\trabalhoFinal_lucas.g4 by ANTLR 4.11.1
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .trabalhoFinal_lucasParser import trabalhoFinal_lucasParser
@@ -86,6 +86,15 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#decFuncao.
     def exitDecFuncao(self, ctx:trabalhoFinal_lucasParser.DecFuncaoContext):
+        pass
+
+
+    # Enter a parse tree produced by trabalhoFinal_lucasParser#parametros.
+    def enterParametros(self, ctx:trabalhoFinal_lucasParser.ParametrosContext):
+        pass
+
+    # Exit a parse tree produced by trabalhoFinal_lucasParser#parametros.
+    def exitParametros(self, ctx:trabalhoFinal_lucasParser.ParametrosContext):
         pass
 
 
@@ -368,39 +377,12 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by trabalhoFinal_lucasParser#intDado.
-    def enterIntDado(self, ctx:trabalhoFinal_lucasParser.IntDadoContext):
+    # Enter a parse tree produced by trabalhoFinal_lucasParser#dado.
+    def enterDado(self, ctx:trabalhoFinal_lucasParser.DadoContext):
         pass
 
-    # Exit a parse tree produced by trabalhoFinal_lucasParser#intDado.
-    def exitIntDado(self, ctx:trabalhoFinal_lucasParser.IntDadoContext):
-        pass
-
-
-    # Enter a parse tree produced by trabalhoFinal_lucasParser#realDado.
-    def enterRealDado(self, ctx:trabalhoFinal_lucasParser.RealDadoContext):
-        pass
-
-    # Exit a parse tree produced by trabalhoFinal_lucasParser#realDado.
-    def exitRealDado(self, ctx:trabalhoFinal_lucasParser.RealDadoContext):
-        pass
-
-
-    # Enter a parse tree produced by trabalhoFinal_lucasParser#stringDado.
-    def enterStringDado(self, ctx:trabalhoFinal_lucasParser.StringDadoContext):
-        pass
-
-    # Exit a parse tree produced by trabalhoFinal_lucasParser#stringDado.
-    def exitStringDado(self, ctx:trabalhoFinal_lucasParser.StringDadoContext):
-        pass
-
-
-    # Enter a parse tree produced by trabalhoFinal_lucasParser#boolDado.
-    def enterBoolDado(self, ctx:trabalhoFinal_lucasParser.BoolDadoContext):
-        pass
-
-    # Exit a parse tree produced by trabalhoFinal_lucasParser#boolDado.
-    def exitBoolDado(self, ctx:trabalhoFinal_lucasParser.BoolDadoContext):
+    # Exit a parse tree produced by trabalhoFinal_lucasParser#dado.
+    def exitDado(self, ctx:trabalhoFinal_lucasParser.DadoContext):
         pass
 
 
