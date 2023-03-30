@@ -80,10 +80,10 @@ fator returns [type]: '(' expr ')' #parenExprFat
     | dado #dadoFat
     | callFunc #callFuncaoFat
     ;
-dado: INT
-    | REAL
-    | STRING
-    | BOOL
+dado returns [type]: INT #intDado
+    | REAL #realDado
+    | STRING #stringDado
+    | BOOL #boolDado
     ;
 not: '!'
     ;

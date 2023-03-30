@@ -1,4 +1,4 @@
-int i, o;
+int i, o, o;
 const real u = 10.0, a = 20.2;
 
 real soma(int i){

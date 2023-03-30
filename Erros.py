@@ -33,9 +33,9 @@ class ErroTipoExpressao(Exception):
         mensagem = 'Linha {}: Operação {} não suportada para os tipos: {} e {}'.format(line, operation, type1, type2) if type2 else 'Linha {}: Operação {} não suportada para o tipo: {}'.format(line, operation, type1)
         super().__init__(mensagem)
 
-class ErroTipoExpressaoDiferenteDeIncremento(Exception):
+class ErroTipoExpressaoFor(Exception):
     def __init__(self, line):
-        mensagem = 'Linha {}: Variaveis diferentes na declaracao do for e no incremento'.format(line)
+        mensagem = 'Linha {}: Variaveis diferentes na declaracao do for'.format(line)
         super().__init__(mensagem)
 
 class ErroRetorno(Exception):

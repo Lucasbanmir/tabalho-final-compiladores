@@ -36,12 +36,12 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
         ids = ctx.listaIds().getText().split(',')
 
         for id in ids:
-            if id in self.symbolTableLocal:
-                raise ValueError(f"Erro semântico: a variável '{id}' já foi declarada")
-            if self.inFunction and id in self.symbolTable:
-                raise ValueError(f"Erro semântico: a variável '{id}' já foi declarada em um escopo anterior")
+            if self.inFunction and id in self.symbolTableLocal:
+                raise ErroDeclaracaoJaFeita(ctx.start.line, id)
+            if id in self.symbolTable:
+                raise ErroDeclaracaoJaFeita(ctx.start.line, id)
             if ctx.tipo().getText() == '<missing <INVALID>>':
-                raise ErroTipoNaoInformado(ctx.start.line, id.getText())
+                raise ErroTipoNaoInformado(ctx.start.line, id)
             if self.inFunction:
                 self.symbolTableLocal[id] = [tipo, None]
             else:
@@ -61,18 +61,28 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
         tipo = ctx.tipo().getText()
         for atrib in ctx.listaAtrib().atrib():
             id_token = atrib.ID().getText()
-            if id_token in self.symbolTableLocal or id_token in self.symbolTable:
-                raise ValueError(f"Erro semântico: a variável '{id_token}' já foi declarada")
+            if self.inFunction and id_token in self.symbolTableLocal:
+                raise ErroDeclaracaoJaFeita(ctx.start.line, id_token)
+            if id_token in self.symbolTable:
+                raise ErroDeclaracaoJaFeita(ctx.start.line, id_token)
             if ctx.tipo().getText() == '<missing <INVALID>>':
-                raise ErroTipoNaoInformado(ctx.start.line, id_token.getText())
+                raise ErroTipoNaoInformado(ctx.start.line, id_token)
             valor = atrib.dado().getText()
             self.symbolTable[id_token] = [tipo, valor]
+
+            if tipo == 'int' and not atrib.dado().INT():
+                raise ErroTipoIncompativelDecl(ctx.start.line, tipo)
+            elif tipo == 'real' and not atrib.dado().REAL():
+                raise ErroTipoIncompativelDecl(ctx.start.line, tipo)
+            elif tipo == 'bool' and not atrib.dado().BOOL():
+                raise ErroTipoIncompativelDecl(ctx.start.line, tipo)
+            elif tipo == 'String' and not atrib.dado().STRING():
+                raise ErroTipoIncompativelDecl(ctx.start.line, tipo)
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#decConst.
     def exitDecConst(self, ctx:trabalhoFinal_lucasParser.DecConstContext):
         pass
-
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#tipo.
     def enterTipo(self, ctx:trabalhoFinal_lucasParser.TipoContext):
@@ -174,10 +184,14 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#main.
     def enterMain(self, ctx:trabalhoFinal_lucasParser.MainContext):
+        self.inFunction = True
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#main.
     def exitMain(self, ctx:trabalhoFinal_lucasParser.MainContext):
+        self.inFunction = False
+        self.symbolTableLocal.clear()
+        self.currentFunctionType = None
         pass
 
 
@@ -246,6 +260,8 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
 
     # Enter a parse tree produced by trabalhoFinal_lucasParser#return.
     def enterReturn(self, ctx:trabalhoFinal_lucasParser.ReturnContext):
+        if not self.inFunction:  # se não há uma função ativa
+            raise ErroRetorno(ctx.start.line)
         pass
 
     # Exit a parse tree produced by trabalhoFinal_lucasParser#return.
@@ -450,13 +466,36 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
     def exitCallFuncaoFat(self, ctx:trabalhoFinal_lucasParser.CallFuncaoFatContext):
         pass
 
-
-    # Enter a parse tree produced by trabalhoFinal_lucasParser#dado.
-    def enterDado(self, ctx:trabalhoFinal_lucasParser.DadoContext):
+    # Enter a parse tree produced by trabalhoFinal_lucasParser#intDado.
+    def enterIntDado(self, ctx: trabalhoFinal_lucasParser.IntDadoContext):
         pass
 
-    # Exit a parse tree produced by trabalhoFinal_lucasParser#dado.
-    def exitDado(self, ctx:trabalhoFinal_lucasParser.DadoContext):
+    # Exit a parse tree produced by trabalhoFinal_lucasParser#intDado.
+    def exitIntDado(self, ctx: trabalhoFinal_lucasParser.IntDadoContext):
+        pass
+
+    # Enter a parse tree produced by trabalhoFinal_lucasParser#realDado.
+    def enterRealDado(self, ctx: trabalhoFinal_lucasParser.RealDadoContext):
+        pass
+
+    # Exit a parse tree produced by trabalhoFinal_lucasParser#realDado.
+    def exitRealDado(self, ctx: trabalhoFinal_lucasParser.RealDadoContext):
+        pass
+
+    # Enter a parse tree produced by trabalhoFinal_lucasParser#stringDado.
+    def enterStringDado(self, ctx: trabalhoFinal_lucasParser.StringDadoContext):
+        pass
+
+    # Exit a parse tree produced by trabalhoFinal_lucasParser#stringDado.
+    def exitStringDado(self, ctx: trabalhoFinal_lucasParser.StringDadoContext):
+        pass
+
+    # Enter a parse tree produced by trabalhoFinal_lucasParser#boolDado.
+    def enterBoolDado(self, ctx: trabalhoFinal_lucasParser.BoolDadoContext):
+        pass
+
+    # Exit a parse tree produced by trabalhoFinal_lucasParser#boolDado.
+    def exitBoolDado(self, ctx: trabalhoFinal_lucasParser.BoolDadoContext):
         pass
 
 
@@ -530,7 +569,6 @@ class trabalhoFinal_lucasListener(ParseTreeListener):
     # Exit a parse tree produced by trabalhoFinal_lucasParser#or.
     def exitOr(self, ctx:trabalhoFinal_lucasParser.OrContext):
         pass
-
 
 
 del trabalhoFinal_lucasParser
